@@ -98,8 +98,10 @@ Surrounding Context:
 - Text Below Input: {TEXT_BELOW}
 - Section/Form Title: {SECTION_TITLE}
 - What is this about?: {CONTEXT_ABOUT}
+- Main Content: {MAIN_CONTENT}
 
 ** ALWaYs GiVe suggestions understanable for human and it makes sense  AND DON'T REPLY FROM INPUT "User Prompt: " JUST BECOME A ENHANCER ALSO try to think like a human and not a machine and enhance the text only not conversation etc... THIS IS STRICT RULE AND IF YOU BREAK IT, YOU WILL BE FIRED**
+*** If the user prompt says reply or make a reply etc. the that mean from available main content and context about ***
 """
 
 spelling_correction_prompt = """
@@ -113,7 +115,7 @@ Output Format:
 """
 
 
-def get_suggestion_prompt(user_input, user_prompt, field_name, input_type, input_purpose, page_title, page_type, page_url, label, text_above, text_below, section_title, context_about):
+def get_suggestion_prompt(user_input, user_prompt, field_name, input_type, input_purpose, page_title, page_type, page_url, label, text_above, text_below, section_title, context_about, main_content):
     return suggestion_prompt.format(
         USER_INPUT=user_input,
         USER_PROMPT=user_prompt,
@@ -127,7 +129,8 @@ def get_suggestion_prompt(user_input, user_prompt, field_name, input_type, input
         TEXT_ABOVE=text_above,
         TEXT_BELOW=text_below,
         SECTION_TITLE=section_title,
-        CONTEXT_ABOUT=context_about)
+        CONTEXT_ABOUT=context_about,
+        MAIN_CONTENT=main_content)
 
 # (rest of your script unchanged)
 
@@ -160,5 +163,5 @@ if __name__ == "__main__":
   }
 }
 
-    prompt = get_suggestion_prompt(data["userInput"], data["userPrompt"], data["inputPurpose"]["fieldName"], data["inputPurpose"]["inputType"], data["inputPurpose"]["whatIsThisInputFor"], data["pageContext"]["page"], data["pageContext"]["pageType"], data["pageContext"]["url"], data["surroundingContext"]["label"], data["surroundingContext"]["textAboveInput"], data["surroundingContext"]["textBelowInput"], data["surroundingContext"]["sectionTitle"], data["surroundingContext"]["whatIsThisAbout"])
+    prompt = get_suggestion_prompt(data["userInput"], data["userPrompt"], data["inputPurpose"]["fieldName"], data["inputPurpose"]["inputType"], data["inputPurpose"]["whatIsThisInputFor"], data["pageContext"]["page"], data["pageContext"]["pageType"], data["pageContext"]["url"], data["surroundingContext"]["label"], data["surroundingContext"]["textAboveInput"], data["surroundingContext"]["textBelowInput"], data["surroundingContext"]["sectionTitle"], data["surroundingContext"]["whatIsThisAbout"], )
     print(prompt)
