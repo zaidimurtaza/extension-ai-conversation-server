@@ -56,7 +56,8 @@ async def get_suggestions(request: SuggestionRequest):
             text_above=request.surroundingContext.textAboveInput,
             text_below=request.surroundingContext.textBelowInput,
             section_title=request.surroundingContext.sectionTitle,
-            context_about=request.surroundingContext.whatIsThisAbout
+            context_about=request.surroundingContext.whatIsThisAbout,
+            main_content=request.surroundingContext.mainContent
         )
         
         # Prepare messages for LLM
