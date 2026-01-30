@@ -64,7 +64,7 @@ async def get_suggestions(request: SuggestionRequest):
         ]
         
         # Call the LLM service
-        response = chat_with_deepseek(messages)
+        response = chat_with_deepseek(messages, text_only=True)
         
         # Check if response is an error
         if isinstance(response, str) and response.startswith("Error"):

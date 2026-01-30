@@ -23,7 +23,7 @@ You must respond ONLY with valid JSON in this exact format:
 }}
 
 # Rules
-1. Provide 1-3 suggestions (max 3)
+1. Provide 1 suggestions (max 1)
 2. Each suggestion should be a COMPLETE, ENHANCED version with additional relevant content added
 3. Follow the user's prompt instructions precisely (tone, audience, style, focus)
 4. If user prompt says "focus on business people", tailor language for professionals
@@ -98,7 +98,20 @@ Surrounding Context:
 - Text Below Input: {TEXT_BELOW}
 - Section/Form Title: {SECTION_TITLE}
 - What is this about?: {CONTEXT_ABOUT}
+
+** ALWaYs GiVe suggestions understanable for human and it makes sense **
 """
+
+spelling_correction_prompt = """
+Correct the spelling of the following text:
+{USER_INPUT}
+Do not refactor, just correct the spelling.
+Output Format:
+{{
+  "corrected_text": "<corrected text>"
+}}
+"""
+
 
 def get_suggestion_prompt(user_input, user_prompt, field_name, input_type, input_purpose, page_title, page_type, page_url, label, text_above, text_below, section_title, context_about):
     return suggestion_prompt.format(
@@ -117,6 +130,11 @@ def get_suggestion_prompt(user_input, user_prompt, field_name, input_type, input
         CONTEXT_ABOUT=context_about)
 
 # (rest of your script unchanged)
+
+def spelling_correction_prompt(user_input):
+    return spelling_correction_prompt.format(
+        USER_INPUT=user_input
+    )
 
 if __name__ == "__main__":
 
