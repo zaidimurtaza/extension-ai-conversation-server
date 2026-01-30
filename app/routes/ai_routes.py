@@ -23,6 +23,7 @@ class SurroundingContext(BaseModel):
     textBelowInput: str
     sectionTitle: str
     whatIsThisAbout: str
+    mainContent: str
 
 class SuggestionRequest(BaseModel):
     userInput: str
