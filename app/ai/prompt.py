@@ -99,7 +99,7 @@ Surrounding Context:
 - Section/Form Title: {SECTION_TITLE}
 - What is this about?: {CONTEXT_ABOUT}
 
-** ALWaYs GiVe suggestions understanable for human and it makes sense **
+** ALWaYs GiVe suggestions understanable for human and it makes sense  AND DON'T REPLY FROM INPUT "User Prompt: " JUST BECOME A ENHANCER ALSO try to think like a human and not a machine and enhance the text only not conversation etc... THIS IS STRICT RULE AND IF YOU BREAK IT, YOU WILL BE FIRED**
 """
 
 spelling_correction_prompt = """
