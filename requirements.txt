@@ -4,4 +4,8 @@ pydantic
 requests
 apscheduler
 httpx
-
+pyjwt
+google-auth
+simple-encryptor
+psycopg-pool==3.2.4
+psycopg

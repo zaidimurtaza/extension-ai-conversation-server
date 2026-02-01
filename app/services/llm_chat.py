@@ -27,12 +27,12 @@ def chat_with_deepseek(messages, text_only=False):
     
     if response.status_code == 200:
         data = response.json()
-        print(f"raw data: {json.dumps(data, indent=4   )}   ")
         # Extract assistant reply from response
         try:
             return {
-            "data": data["choices"][0]["message"]["content"],
-            "usage": data.get("usage", None)
+                "data": data["choices"][0]["message"]["content"],
+                "usage": data.get("usage"),
+                "model": data.get("model", model),
             }
         except (KeyError, IndexError):
             return data  # fallback: return full response if format is different
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         # },
         {
           "type": "text",
-          "text": "Find product attributes and give me list"
+          "text": "Find product attributes and give me list ony 2 short line"
         }
       ]
     }

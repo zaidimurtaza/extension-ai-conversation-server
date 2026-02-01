@@ -1,12 +1,14 @@
+import os
+import atexit
+
+import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
-import httpx
-import os
-import atexit
 
 from app.routes.ai_routes import router as ai_router
+from app.routes.auth_routes import router as auth_router
 
 app = FastAPI()
 
@@ -20,6 +22,9 @@ app.add_middleware(
 )
 
 app.include_router(ai_router)
+app.include_router(auth_router)
+
+
 
 @app.get("/")
 async def root():
