@@ -1,4 +1,5 @@
 import secrets
+import string
 import time
 import urllib.parse
 
@@ -27,6 +28,22 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 SCOPE = "openid email profile"
+
+# In-memory one-time codes: code -> { accessToken, refreshToken, created_at }; 40s TTL
+CODE_CHARS = string.ascii_lowercase + string.digits
+CODE_TTL_SEC = 40
+_auth_codes: dict[str, dict] = {}
+
+
+def _make_auth_code() -> str:
+    return "".join(secrets.choice(CODE_CHARS) for _ in range(6))
+
+
+def _clean_expired_codes() -> None:
+    now = time.time()
+    expired = [c for c, v in _auth_codes.items() if (now - v["created_at"]) > CODE_TTL_SEC]
+    for c in expired:
+        del _auth_codes[c]
 
 
 @router.get("/login")
@@ -123,10 +140,36 @@ def callback(code: str | None = None, state: str | None = None, error: str | Non
     access = create_access_token(user_id, email, role=role)
     refresh = create_refresh_token(user_id, email, role=role)
 
-    redirect_url = (
-        f"{FRONTEND_REDIRECT_URL}?accessToken={urllib.parse.quote(access)}&refreshToken={urllib.parse.quote(refresh)}"
-    )
+    _clean_expired_codes()
+    code = _make_auth_code()
+    _auth_codes[code] = {
+        "accessToken": access,
+        "refreshToken": refresh,
+        "created_at": time.time(),
+    }
+    redirect_url = f"{FRONTEND_REDIRECT_URL}?code={code}"
     return RedirectResponse(url=redirect_url, status_code=302)
+
+
+@router.get("/tokens")
+def exchange_code_for_tokens(code: str):
+    """
+    One-time exchange: pass the 6-char code from redirect; returns access + refresh.
+    Code expires in 40s and is deleted after successful use.
+    """
+    _clean_expired_codes()
+    if code not in _auth_codes:
+        raise HTTPException(status_code=400, detail="Invalid or expired code")
+    entry = _auth_codes[code]
+    if (time.time() - entry["created_at"]) > CODE_TTL_SEC:
+        del _auth_codes[code]
+        raise HTTPException(status_code=400, detail="Code expired")
+    del _auth_codes[code]
+    return {
+        "access_token": entry["accessToken"],
+        "refresh_token": entry["refreshToken"],
+        "token_type": "bearer",
+    }
 
 
 @router.post("/refresh")
