@@ -1,6 +1,9 @@
 import json
 import base64
+import logging
 import requests
+
+logger = logging.getLogger(__name__)
 
 # Models to try in order when text_only=True; if one fails (non-200), we try the next
 CHAT_MODELS = [
@@ -32,8 +35,10 @@ def chat_with_deepseek(messages, text_only=False):
     else:
         models_to_try = [CHAT_MODELS[-1]]
 
+    logger.info("chat_with_deepseek text_only=%s, models_to_try=%s", text_only, models_to_try)
     last_error = None
     for model in models_to_try:
+        logger.info("Trying model: %s", model)
         headers = {"Content-Type": "application/json"}
         payload = {
             "model": model,
@@ -45,18 +50,23 @@ def chat_with_deepseek(messages, text_only=False):
 
         if response.status_code != 200:
             last_error = f"Error {response.status_code}: {response.text}"
+            logger.warning("Model %s failed: %s", model, last_error[:200])
             continue
 
         data = response.json()
         try:
-            return {
+            result = {
                 "data": data["choices"][0]["message"]["content"],
                 "usage": data.get("usage"),
                 "model": data.get("model", model),
             }
+            logger.info("Model %s succeeded", model)
+            return result
         except (KeyError, IndexError):
+            logger.debug("Model %s returned unexpected shape, returning raw data", model)
             return data
 
+    logger.error("All models failed. Last error: %s", (last_error or "")[:200])
     return last_error
 
 
